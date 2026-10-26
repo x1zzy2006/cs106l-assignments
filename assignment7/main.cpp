@@ -52,7 +52,14 @@ template <typename T> struct ListNode {
  */
 template <typename T> cs106l::unique_ptr<ListNode<T>> create_list(const std::vector<T>& values) {
   /* STUDENT TODO: Implement this method */
-  throw std::runtime_error("Not implemented: createList");
+  cs106l::unique_ptr<ListNode<T>> head = nullptr;
+  for (int i = static_cast<int>(values.size()) - 1; i >= 0; i--)  //static_cast<int>进行显式转换，否则values.size()返回值为0的size_t基本类型，再减去1，这一行为显然是不被预期的
+  {
+    cs106l::unique_ptr<ListNode<T>> node = cs106l::make_unique<ListNode<T>>(values[i]);
+    node->next = std::move(head); //注意C++赋值部分的RAII特殊写法：不能使用一般的=，会调用copy assignment，加上std::move才行，需要调用move assignment
+    head = std::move(node);
+  }
+  return head;
 }
 
 /**
